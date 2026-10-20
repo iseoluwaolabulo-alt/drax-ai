@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="Drax Logo.png">
+<title>Drax AI — Sign Up / Log In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #06060a;
+    --surface: #0e0e16;
+    --surface2: #161622;
+    --accent: #7b5cff;
+    --accent2: #ff4fd8;
+    --accent3: #00e5ff;
+    --text: #f0eeff;
+    --muted: #6b6888;
+    --border: rgba(123,92,255,0.18);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+    min-height: 100vh;
+  }
+
+  /* ── Custom cursor ── */
+  #cursor {
+    position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+    background: var(--accent); border-radius: 50%; pointer-events: none;
+    z-index: 9999; transform: translate(-50%,-50%);
+    transition: transform 0.08s, background 0.3s, width 0.2s, height 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+    border: 1px solid rgba(123,92,255,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998; transform: translate(-50%,-50%);
+    transition: transform 0.18s cubic-bezier(.25,.46,.45,.94), width 0.3s, height 0.3s;
+  }
+  body:has(a:hover,button:hover,input:hover) #cursor { width: 20px; height: 20px; }
+  body:has(a:hover,button:hover,input:hover) #cursor-ring { width: 56px; height: 56px; }
+
+  /* ── Noise overlay ── */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(6,6,10,0.6);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    animation: slideDown 0.8s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .logo {
+    font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .nav-link {
+    color: var(--muted); text-decoration: none; font-size: 0.88rem;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--text); }
+
+  /* ── AUTH HERO ── */
+  .auth-hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Orbs */
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(90px); pointer-events: none; opacity: 0.45;
+  }
+  .orb-1 {
+    width: 520px; height: 520px; top: -120px; left: -140px;
+    background: radial-gradient(circle, #7b5cff55, transparent 70%);
+    animation: float1 9s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 380px; height: 380px; bottom: -80px; right: -80px;
+    background: radial-gradient(circle, #ff4fd855, transparent 70%);
+    animation: float2 11s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 260px; height: 260px; top: 35%; right: 12%;
+    background: radial-gradient(circle, #00e5ff44, transparent 70%);
+    animation: float3 7s ease-in-out infinite;
+  }
+  @keyframes float1 {
+    0%,100%{transform:translate(0,0) scale(1)}
+    33%{transform:translate(40px,-30px) scale(1.06)}
+    66%{transform:translate(-20px,40px) scale(0.96)}
+  }
+  @keyframes float2 {
+    0%,100%{transform:translate(0,0) scale(1)}
+    40%{transform:translate(-50px,20px) scale(1.08)}
+    70%{transform:translate(30px,-40px) scale(0.94)}
+  }
+  @keyframes float3 {
+    0%,100%{transform:translate(0,0)}
+    50%{transform:translate(-30px,30px)}
+  }
+
+  /* ── AUTH CARD ── */
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2.8rem 2.6rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+    position: relative;
+    z-index: 2;
+    animation: cardEnter 0.8s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .auth-header .logo {
+    font-size: 2rem;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  .auth-header h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.4rem;
+  }
+  .auth-header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Tabs */
+  .auth-tabs {
+    display: flex;
+    background: var(--surface2);
+    border-radius: 100px;
+    padding: 4px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 0.65rem 1.4rem;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 100px;
+    cursor: none;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(123,92,255,0.35);
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 1.15rem;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.02em;
+  }
+  .form-group input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1.15rem;
+    font-size: 0.95rem;
+    color: var(--text);
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(123,92,255,0.12);
+  }
+  .form-group input::placeholder {
+    color: #5a5770;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  .form-row .form-group {
+    flex: 1;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin: 1.1rem 0 1.4rem;
+  }
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    margin-top: 2px;
+    cursor: none;
+  }
+  .checkbox-group label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin: 0;
+  }
+  .checkbox-group a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .checkbox-group a:hover {
+    text-decoration: underline;
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.4rem;
+    font-size: 0.82rem;
+  }
+  .form-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    cursor: none;
+  }
+  .form-options a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .form-options a:hover {
+    text-decoration: underline;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    padding: 0.95rem 2.2rem;
+    border-radius: 100px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 4px 30px rgba(123,92,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .btn-primary:hover {
+    transform: scale(1.015) translateY(-1px);
+    box-shadow: 0 8px 40px rgba(123,92,255,0.5);
+  }
+  .btn-primary:disabled {
+    opacity: 0.7;
+    transform: none;
+  }
+
+  .btn-loading {
+    pointer-events: none;
+  }
+  .btn-loading::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 0.6rem;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.8rem 0 1.4rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Social buttons */
+  .social-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0.65rem;
+    text-decoration: none;
+  }
+  .social-btn:hover {
+    border-color: var(--accent);
+    background: rgba(123,92,255,0.08);
+    transform: translateY(-1px);
+  }
+  .social-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  .social-btn.apple {
+    background: #000;
+    border-color: #222;
+    color: #fff;
+  }
+  .social-btn.apple:hover {
+    background: #111;
+    border-color: #444;
+  }
+
+  /* Switch link */
+  .switch-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 1.6rem;
+  }
+  .switch-text a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .switch-text a:hover {
+    text-decoration: underline;
+  }
+
+  /* Success state */
+  .success-state {
+    text-align: center;
+    padding: 1.5rem 0.5rem;
+  }
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #7b5cff, #ff4fd8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.2rem;
+    color: #fff;
+    animation: popIn 0.5s cubic-bezier(.16,1,.3,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .success-state h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .success-state p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  .success-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0.85rem 1.8rem;
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: none;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    background: rgba(123,92,255,0.08);
+  }
+
+  /* Error message */
+  .error-msg {
+    background: rgba(255, 79, 216, 0.1);
+    border: 1px solid rgba(255,79,216,0.3);
+    color: #ff8ac2;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.5rem; }
+    .auth-card { padding: 2.2rem 1.8rem; max-width: 94%; }
+    .auth-hero { padding: 6rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="logo">Drax AI</a>
+  <a href="index.html" class="nav-link">← Back to home</a>
+</nav>
+
+<section class="auth-hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo">Drax AI</div>
+      <h1 id="auth-title">Create your account</h1>
+      <p id="auth-subtitle">Join 2.4 million thinkers already using Drax</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="tab active" data-mode="signup">Sign up</button>
+      <button class="tab" data-mode="login">Log in</button>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div id="form-area">
+      </div>
+
+    <div id="social-section">
+      <div class="divider"><span>or continue with</span></div>
+      
+      <a href="#" class="social-btn google" onclick="handleSocialLogin('google')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.51h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.34z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </a>
+
+      <a href="#" class="social-btn apple" onclick="handleSocialLogin('apple')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        Continue with Apple
+      </a>
+    </div>
+
+    <div class="switch-text" id="switch-text">
+      Already have an account? <a href="#" id="switch-link">Log in</a>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  /* ─── 1. REAL FIREBASE IMPORTS ─── */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  // Using the exact same config from your chat page
+  const firebaseConfig = {
+    apiKey: "AIzaSyByZfBW-1hK9Rrd4_7fJ6bqOPtBjbaAkrw",
+    authDomain: "drax-ai-1a75d.firebaseapp.com",
+    projectId: "drax-ai-1a75d",
+    storageBucket: "drax-ai-1a75d.firebasestorage.app",
+    messagingSenderId: "1004279366880",
+    appId: "1:1004279366880:web:5b452e9a1a0ed6791efc85",
+    measurementId: "G-C7GS866BSB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  /* ─── Cursor (Untouched) ─── */
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop(){
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+
+  /* ─── Tab + Form Logic (Untouched UI) ─── */
+  let currentMode = 'signup';
+
+  const formArea = document.getElementById('form-area');
+  const authTitle = document.getElementById('auth-title');
+  const authSubtitle = document.getElementById('auth-subtitle');
+  const switchText = document.getElementById('switch-text');
+  const tabs = document.querySelectorAll('.tab');
+  const errorMsg = document.getElementById('error-msg');
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+    setTimeout(() => { errorMsg.style.display = 'none'; }, 4200);
+  }
+
+  function clearError() {
+    errorMsg.style.display = 'none';
+  }
+
+  // Exposed to window so your inline HTML onclicks still work inside a JS module
+  window.forgotPassword = function() {
+    const email = prompt("Enter your email address to receive a reset link:");
+    if (email) {
+      const msg = document.createElement('div');
+      msg.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);padding:1rem 1.6rem;border-radius:100px;font-size:0.9rem;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:99999;';
+      msg.innerHTML = `✉️ Password reset link sent to <strong>${email}</strong>`;
+      document.body.appendChild(msg);
+      setTimeout(() => {
+        msg.style.transition = 'all 0.4s ease';
+        msg.style.opacity = '0';
+        setTimeout(() => msg.remove(), 300);
+      }, 3200);
+    }
+  }
+
+  function renderForm(mode) {
+    currentMode = mode;
+    clearError();
+
+    tabs.forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.mode === mode);
+    });
+
+    if (mode === 'signup') {
+      authTitle.textContent = 'Create your account';
+      authSubtitle.textContent = 'Join 2.4 million thinkers already using Drax';
+      switchText.innerHTML = `Already have an account? <a href="#" id="switch-link">Log in</a>`;
+      
+      formArea.innerHTML = `
+        <form id="auth-form" novalidate>
+          <div class="form-group">
+            <label>Full name</label>
+            <input type="text" id="full-name" placeholder="Alex Rivera" required>
+          </div>
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" id="email" placeholder="you@company.com" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="password" placeholder="Create a strong password" required minlength="8">
+            </div>
+            <div class="form-group">
+              <label>Confirm password</label>
+              <input type="password" id="confirm-password" placeholder="Repeat password" required>
+            </div>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" required>
+            <label for="terms">
+              I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>
+            </label>
+          </div>
+          <button type="submit" class="btn-primary" id="submit-btn">Create Account</button>
+        </form>
+      `;
+    } else {
+      authTitle.textContent = 'Welcome back';
+      authSubtitle.textContent = 'Sign in to continue your journey with Drax';
+      switchText.innerHTML = `Don't have an account? <a href="#" id="switch-link">Sign up</a>`;
+      
+      formArea.innerHTML = `
+        <form id="auth-form" novalidate>
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" id="email" placeholder="you@company.com" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+          </div>
+          <div class="form-options">
+            <label><input type="checkbox" checked> Remember me</label>
+            <a href="#" onclick="forgotPassword()">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-primary" id="submit-btn">Log in</button>
+        </form>
+      `;
+    }
+
+    const form = document.getElementById('auth-form');
+    form.addEventListener('submit', handleFormSubmit);
+
+    const newSwitchLink = document.getElementById('switch-link');
+    if (newSwitchLink) {
+      newSwitchLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderForm(currentMode === 'signup' ? 'login' : 'signup');
+      });
+    }
+  }
+
+  /* ─── 2. REAL FIREBASE EMAIL/PASSWORD AUTH ─── */
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    clearError();
+
+    const btn = document.getElementById('submit-btn');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (currentMode === 'signup') {
+      const confirm = document.getElementById('confirm-password').value;
+      if (password !== confirm) {
+        showError("Passwords do not match. Please try again.");
+        return;
+      }
+      if (password.length < 8) {
+        showError("Password must be at least 8 characters long.");
+        return;
+      }
+    }
+
+    const originalText = btn.textContent;
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    btn.innerHTML = currentMode === 'signup' ? 'Creating account...' : 'Signing in...';
+
+    try {
+      if (currentMode === 'signup') {
+        const fullName = document.getElementById('full-name').value;
+        // Create the user in Firebase
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Save their display name
+        await updateProfile(userCredential.user, { displayName: fullName });
+      } else {
+        // Log in the user
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+      showSuccessState();
+    } catch (error) {
+      // Show clean Firebase error messages
+      showError(error.message.replace('Firebase: ', '').replace(/\(auth.*\)\./, ''));
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  }
+
+  /* ─── Success State ─── */
+  function showSuccessState() {
+    const card = document.querySelector('.auth-card');
+    const isSignup = currentMode === 'signup';
+    
+    card.innerHTML = `
+      <div class="success-state">
+        <div class="success-icon">${isSignup ? '✦' : '✓'}</div>
+        <h2>${isSignup ? 'Welcome to Drax AI' : 'Welcome back!'}</h2>
+        <p>${isSignup ? 'Your account has been created successfully. You\'re now part of the future of thinking.' : 'You\'ve successfully signed in. Let\'s pick up where you left off.'}</p>
+        <div class="success-actions">
+          <button onclick="enterDrax()" class="btn-primary" style="width: auto; padding: 0.85rem 2.4rem;">
+            ${isSignup ? 'Start Exploring' : 'Go to Dashboard'}
+          </button>
+        </div>
+        <p style="margin-top: 1.8rem; font-size: 0.75rem; color: var(--muted);">Redirecting you to Drax...</p>
+      </div>
+    `;
+    
+    // Auto redirect after 1.5 seconds
+    setTimeout(window.enterDrax, 1500);
+  }
+
+  /* ─── 3. REDIRECT TO CHAT PAGE ─── */
+  window.enterDrax = function() {
+    const card = document.querySelector('.auth-card');
+    if(card) {
+      card.style.transition = 'all 0.4s ease';
+      card.style.opacity = '0';
+    }
+    setTimeout(() => {
+      // Sends the user straight to your chat app
+      window.location.href = 'Drax_Chat.html';
+    }, 380);
+  }
+
+  /* ─── 4. REAL FIREBASE GOOGLE LOGIN ─── */
+  window.handleSocialLogin = async function(providerName) {
+    if (providerName === 'google') {
+      const btns = document.querySelectorAll('.social-btn');
+      btns.forEach(b => b.style.pointerEvents = 'none');
+      
+      const originalTexts = [];
+      btns.forEach((btn, i) => {
+        originalTexts[i] = btn.innerHTML;
+        if(btn.classList.contains('google')) {
+           btn.innerHTML = `<span style="display:flex;align-items:center;gap:0.6rem;">Connecting to Google...</span>`;
+        }
+      });
+
+      try {
+        await signInWithPopup(auth, provider);
+        const card = document.querySelector('.auth-card');
+        card.innerHTML = `
+          <div class="success-state">
+            <div class="success-icon" style="background: linear-gradient(135deg, #00e5ff, #7b5cff);">✓</div>
+            <h2>Successfully connected</h2>
+            <p>You've signed in with Google.<br>Welcome to Drax AI.</p>
+            <div class="success-actions">
+              <button onclick="enterDrax()" class="btn-primary" style="width: auto; padding: 0.85rem 2.4rem;">Enter Drax</button>
+            </div>
+          </div>
+        `;
+        setTimeout(window.enterDrax, 1500);
+      } catch (error) {
+        showError(error.message.replace('Firebase: ', ''));
+        btns.forEach((btn, i) => {
+          btn.style.pointerEvents = 'auto';
+          btn.innerHTML = originalTexts[i];
+        });
+      }
+    } else {
+      alert("Apple Sign-In is coming soon! Please use Google for now.");
+    }
+  }
+
+  /* ─── Tab Click Handlers ─── */
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      if (!tab.classList.contains('active')) {
+        renderForm(tab.dataset.mode);
+      }
+    });
+  });
+
+  /* ─── Initial Render ─── */
+  window.addEventListener('load', () => {
+    renderForm('signup');
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+        e.preventDefault();
+        const emailInput = document.getElementById('email');
+        if (emailInput) emailInput.focus();
+      }
+    });
+  });
+
+  console.log('%c[Drax AI] Sign-up page ready with real Firebase Auth.', 'color:#6b6888');
+</script>
+</body>
+</html>

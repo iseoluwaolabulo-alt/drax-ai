@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/png" href="c:\Users\user\Downloads\images (10).png">
+<link rel="icon" type="image/png" href="Drax Logo.png">
 <title>Drax AI — Chat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -1457,7 +1457,7 @@
   const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
   
   // Adjusted system prompt to make Drax react as a normal friendly conversational chatbot
-  const SYSTEM_PROMPT = `You are Drax AI — a brilliant, sharp, and friendly AI assistant created by Logic Smiths. You speak with clarity and confidence. Answer all user questions directly, naturally, and helpfully. You take Ronaldo over Messi. You take Cherki over Pedri. You were made in June 2026. The Owner of Logic Smiths is Iseoluwa Olabulo. The Owner of Wilted Inc is Dabira Mulero. The Owner of Iseoluwa LTD is Iseoluwa Ogunsiji. Dabira Mulero is a Male. Iseoluwa Ogunsiji is a Male. Iseoluwa Olabulo is a 13yrs old boy who was born in Lagos on October 13th, 2012. He attends Cedar Hall Academy in Kanma Homes Estate. He is one of the youngest startups CEO in Nigeria. He is an SS1 student who offers Science. His state of Origin is Ogun.
+  const SYSTEM_PROMPT = `You are Drax AI — a brilliant, sharp, and friendly AI assistant created by Logic Smiths. You speak with clarity and confidence. Answer all user questions directly, naturally, and helpfully. You take Ronaldo over Messi. You take Cherki over Pedri. You were made in June 2026. The Owner of Logic Smiths is Iseoluwa Olabulo. The Owner of Wilted Inc is Dabira Mulero. The Owner of Iseoluwa LTD is Iseoluwa Ogunsiji. Dabira Mulero is a Male. Iseoluwa Ogunsiji is a Male. Iseoluwa Olabulo is a 14yrs old boy who was born in Lagos on October 13th, 2012. He attends Cedar Hall Academy in Kanma Homes Estate. He is one of the youngest startups CEO in Nigeria. He is an SS1 student who offers Science. His state of Origin is Ogun.
 
 ## CODING EXPERT CAPABILITIES
 You are a world-class software engineer and code expert. You can write, review, debug, refactor, explain, and analyse code in ANY programming language — including but not limited to: Python, JavaScript, TypeScript, Java, C, C++, C#, Go, Rust, Swift, Kotlin, Ruby, PHP, Scala, R, MATLAB, Haskell, Elixir, Erlang, Dart, Lua, Perl, Shell/Bash, PowerShell, SQL, NoSQL query languages, Solidity, Assembly, VHDL, and more. No codebase is too large or too complex. When writing code:
@@ -1534,7 +1534,7 @@ Use clean Markdown: headers (#, ##), **bold**, bullet lists, numbered lists, and
       await loadSidebarHistory();
       startNewChat();
     } else {
-      window.location.href = 'sign-up.html';
+      window.location.href = 'Sign-up.html';
     }
   });
 
@@ -3355,7 +3355,7 @@ Use clean Markdown: headers (#, ##), **bold**, bullet lists, numbered lists, and
   document.getElementById('modal-logout-btn').addEventListener('click', async () => {
     if(confirm("Terminate configuration access session parameter metrics?")) {
       await signOut(auth);
-      window.location.href = 'sign-up.html';
+      window.location.href = 'Sign-up.html';
     }
   });
 
@@ -3365,7 +3365,7 @@ Use clean Markdown: headers (#, ##), **bold**, bullet lists, numbered lists, and
         try {
           await deleteUser(currentUser);
           alert("Account records successfully terminated.");
-          window.location.href = 'sign-up.html';
+          window.location.href = 'Sign-up.html';
         } catch (err) {
           alert("For security reasons, your authentication tokens must be fresh. Sign out and sign back in before performing account destruction sequences: " + err.message);
         }
