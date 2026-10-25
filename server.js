@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/chat', (req, res) => {
-    res.sendFile(path.join(__dirname, 'chat.html'));
+    res.sendFile(path.join(__dirname, 'Drax Chat.html'));
 });
 
 // Only start the listener when developing locally
