@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/chat', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Drax Chat.html'));
+    res.sendFile(path.join(__dirname, 'Drax_Chat.html'));
 });
 app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'Sign up.html'));
