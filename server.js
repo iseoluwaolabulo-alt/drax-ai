@@ -15,7 +15,9 @@ app.get('/', (req, res) => {
 app.get('/chat', (req, res) => {
     res.sendFile(path.join(__dirname, 'Drax Chat.html'));
 });
-
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Sign up.html'));
+});
 // Only start the listener when developing locally
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
